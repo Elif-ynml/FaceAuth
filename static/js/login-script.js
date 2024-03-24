@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const startCameraButton = document.getElementById("start-camera-btn");
     const registerButton = document.getElementById("register-btn");
     registerButton.addEventListener("click", function() {
-        window.location.href = "register.html"; // Kayıt sayfasına yönlendirme
+        window.location.href = "/kayit"; // Kayıt sayfasına yönlendirme
       });
     });
 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
       
       if (username === "doğru_kullanıcı_adı" && password === "doğru_şifre" && yüz_verisi_doğru_mu) {
          // Giriş başarılı
-         window.location.href = "anasayfa.html";
+         window.location.href = "/anasayfa";
       } else {
         errorMessage.textContent = "Kullanıcı adı, şifre veya yüz verisi yanlış.";
        }

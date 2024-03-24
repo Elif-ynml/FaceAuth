@@ -3,26 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kayıt Ol</title>
-<link rel="stylesheet" type="text/css" href="register-style.css">
-<script src="register-script.js"></script>
+<title>Giriş Yap</title>
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/login-style.css') }}">
+<script src="{{ url_for('static', filename='js/login-script.js') }}"></script>
 
 </head>
 <body>
 
 <div class="container">
   <div class="content">
-    <h1>Kayıt Ol</h1>
-    <form id="register-form" method="post" >
+    <h1>Giriş Yap</h1>
+    <form id="login-form" method="post" >
       <input type="text" id="username" placeholder="Kullanıcı Adı" required>
       <input type="password" id="password" placeholder="Şifre" required>
-      <input type="email" id="email" placeholder="E-posta" required>
       <div class="video-container" id="faceData">
         <video id="video" width="320" height="240"></video>
       </div>
       <button type="button" id="start-camera-btn">Kamerayı Başlat</button><br>
-      <button type="submit">Kayıt Ol</button>
-      <button id="login-btn">Giriş Yap</button>
+      <button type="submit">Giriş Yap</button>
+      <button id="register-btn">Kayıt Ol</button>
     </form>
     <p id="error-message" class="error-message"></p>
     <div id="success-message" class="success-message"></div>

@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kayıt Ol</title>
-<link rel="stylesheet" href="register-style.css">
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/register-style.css') }}">
+<script src="{{ url_for('static', filename='js/register-script.js') }}"></script>
 </head>
 <body>
   
@@ -26,6 +27,6 @@
     <div id="success-message" class="success-message"></div>
   </div>
 </div>
-<script src="register-script.js"></script>
+
 </body>
 </html>

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginButton = document.getElementById("login-btn");
     
     loginButton.addEventListener("click", function() {
-        window.location.href = "login.html"; // Giriş sayfasına yönlendirme
+        window.location.href = "/giris"; // Giriş sayfasına yönlendirme
       });
     
     let videoStream;
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
        .then(data => {
          console.log('Kayıt başarılı:', data);
          
-         window.location.href = "giris.html"; // Giriş sayfasına yönlendir
+         window.location.href = "/giris"; // Giriş sayfasına yönlendir
        })
       .catch(error => {
          console.error('Kayıt sırasında hata:', error);

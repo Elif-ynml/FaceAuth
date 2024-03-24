@@ -3,11 +3,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const registerButton = document.getElementById("register-btn");
   
     loginButton.addEventListener("click", function() {
-      window.location.href = "login.html"; // Giriş sayfasına yönlendirme
+      window.location.href = "/giris"; // Giriş sayfasına yönlendirme
     });
   
     registerButton.addEventListener("click", function() {
-      window.location.href = "register.html"; // Kayıt sayfasına yönlendirme
+      window.location.href = "/kayit"; // Kayıt sayfasına yönlendirme
     });
   });
   
