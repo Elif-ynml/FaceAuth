@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Response, request
 import sqlite3
 import cv2
+from cryptography.fernet import Fernet
 
 app = Flask(__name__)
 
@@ -10,7 +11,7 @@ def create_database():
     cursor = connection.cursor()
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT NOT NULL,
                     email TEXT NOT NULL,
                     password TEXT NOT NULL,
@@ -20,12 +21,21 @@ def create_database():
     connection.commit()
     connection.close()
 
+# Anahtar oluştur
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+
 # Veritabanına verileri eklemek için
 def insert_data(username, email, password, faceData):
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
 
-    cursor.execute("INSERT INTO users (username, email, password, faceData) VALUES (?, ?, ?, ?)", (username, email, password, faceData))
+    # Verileri şifrele
+    encrypted_password = cipher_suite.encrypt(password.encode())
+    encrypted_face_data = cipher_suite.encrypt(faceData.encode())
+
+    cursor.execute("INSERT INTO users (username, email, password, faceData) VALUES (?, ?, ?, ?)",
+                   (username, email, encrypted_password, encrypted_face_data))
 
     connection.commit()
     connection.close()
@@ -35,25 +45,50 @@ def authenticate_user(username, password, faceData):
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE username=? AND password=? AND faceData=?", (username, password, faceData))
+    cursor.execute("SELECT * FROM users WHERE username=?", (username,))
     user = cursor.fetchone()
+    if user:
+        stored_password = cipher_suite.decrypt(user[3]).decode()
+        stored_face_data = cipher_suite.decrypt(user[4]).decode()
+        if stored_password == password and stored_face_data == faceData:
+            return user
 
     connection.close()
-
-    return user
+    return None
 
 @app.route('/anasayfa')
 def anasayfa():
     return render_template("index.html")
 
-@app.route('/giris')
+@app.route('/giris', methods=['GET', 'POST'])
 def giris():
-    return render_template("login.html")
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        face_data = request.form['faceData']
+        
+        user = authenticate_user(username, password, face_data)
+        if user:
+            return "Giriş başarılı! Kullanıcı adı: {}".format(username)
+        else:
+            return "Giriş başarısız! Kullanıcı adı, şifre veya yüz verisi yanlış!"
+    else:
+        return render_template("login.html")
 
-@app.route('/kayit')
+@app.route('/kayit', methods=['GET', 'POST'])
 def kayit():
-    return render_template("register.html")
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        face_data = request.form['faceData']
+        
+        insert_data(username, email, password, face_data)
+        return "Kullanıcı başarıyla kaydedildi!"
+    else:
+        return render_template("register.html")
 
+# Yüz tanıma route'u
 @app.route('/video_feed')
 def video_feed():
     camera = cv2.VideoCapture(0)
@@ -84,20 +119,7 @@ def video_feed():
     # Flask'a görüntü verilerini döndürmek için Response objesi kullan
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/form', methods=['GET', 'POST'])
-def form_verileri():
-    if request.method == 'POST':
-        # POST isteği ile gönderilen form verilerini alın
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        face_data = request.form['faceData']  # Eğer yüz verisi de gönderiliyorsa, bu şekilde alınabilir
-        
-        # Bu verileri bir HTML sayfasında göstermek için render_template fonksiyonunu kullanın
-        return render_template('form.html', username=username, password=password, email=email, face_data=face_data)
-    elif request.method == 'GET':
-        # GET isteği ile erişildiğinde, boş bir form gösterilebilir veya başka bir işlem yapılabilir
-        return render_template('form.html')  # Örnek olarak form.html'i gösteriyoruz
+# Diğer route'lar devam ediyor...
 
 if __name__ =="__main__":
     create_database()  # Uygulama başlatıldığında veritabanını oluştur
