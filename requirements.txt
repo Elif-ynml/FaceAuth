@@ -1,0 +1,10 @@
+opencv-contrib-python
+Pillow
+ctypes
+re
+base64
+os
+hashlib
+sqlite3
+Image, ImageTk
+tkinter
